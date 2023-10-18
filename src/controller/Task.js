@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import Database from '../Database.js'
+import verifyIfTaskExists from '../utils/verify-if-task-exists.js'
 
 const db = new Database()
 
@@ -10,6 +11,9 @@ class Task {
 
   create(req, res) {
     const { title, description } = req.body
+
+    if (!title || !description)
+      return res.writeHead(400).end(JSON.stringify({ message: 'Missing required fields!' }))
 
     const task = {
       id: randomUUID(),
@@ -38,7 +42,10 @@ class Task {
     const { id } = req.params
     const { title, description } = req.body
 
-    const [ task ] = db.select('tasks', { id })
+    if (!title || !description)
+      return res.writeHead(400).end(JSON.stringify({ message: 'Missing required fields!' }))
+
+    const task = verifyIfTaskExists(id)
     if (!task) return res.writeHead(404).end('Task not found!')
     
     const taskUpdated = {
@@ -56,6 +63,9 @@ class Task {
   delete(req, res) {
     const { id } = req.params
 
+    if (!verifyIfTaskExists(id)) 
+      return res.writeHead(404).end('Task not found!')
+
     db.delete('tasks', id)
     
     return res.writeHead(204).end('Task deleted with sucess!')
@@ -64,7 +74,7 @@ class Task {
   complete(req, res) {
     const { id } = req.params
 
-    const [ task ] = db.select('tasks', { id })
+    const task = verifyIfTaskExists(id)
     if (!task) return res.writeHead(404).end('Task not found!')
 
     const taskUpdated = {

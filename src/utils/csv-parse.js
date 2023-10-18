@@ -19,5 +19,5 @@ function csvParse(csv) {
     .on('end', () => { console.log("Document read with successfully"); })
 }
 
-const csvPath = new URL('../../node-desafio-01.csv', import.meta.url)
+const csvPath = new URL('../public/node-desafio-01.csv', import.meta.url)
 csvParse(csvPath)
