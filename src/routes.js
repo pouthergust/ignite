@@ -1,4 +1,4 @@
-import Task from './models/Task.js'
+import Task from './controller/Task.js'
 
 import buildRoutePath from './utils/build-route-path.js'
 
